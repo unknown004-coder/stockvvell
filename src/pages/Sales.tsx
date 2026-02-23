@@ -1,6 +1,6 @@
 import { BarChart3, TrendingUp, AlertCircle } from "lucide-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { getJSON, postJSON } from "@/lib/api";
+import { getJSON, postJSON, del } from "@/lib/api";
 import { toast } from "@/hooks/use-toast";
 import SaleFormDialog from "@/components/SaleFormDialog";
 import { AreaChart, Area, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
@@ -13,7 +13,7 @@ const Sales = () => {
     <div>
       <div className="flex items-center justify-between mb-6">
         <h1 className="page-header">Sales & Demand</h1>
-        <div>
+        <div className="flex items-center gap-2">
           <SaleFormDialog
             trigger={<button className="inline-flex items-center gap-2 rounded-md bg-accent px-3 py-2 text-sm text-accent-foreground">Record Sale</button>}
             onSaved={() => {
@@ -23,6 +23,22 @@ const Sales = () => {
               qc.invalidateQueries(["stats"]);
             }}
           />
+          <button
+            onClick={async () => {
+              if (!confirm("Clear all sales? This will reset the demand graph.")) return;
+              try {
+                await del("/api/sales");
+                toast({ title: "Sales cleared" });
+                qc.invalidateQueries(["sales"]);
+                qc.invalidateQueries(["stats"]);
+              } catch (err: any) {
+                toast({ title: "Error", description: err?.message || String(err) });
+              }
+            }}
+            className="inline-flex items-center gap-2 rounded-md bg-destructive px-3 py-2 text-sm text-destructive-foreground"
+          >
+            Reset Sales
+          </button>
         </div>
       </div>
 
@@ -136,7 +152,7 @@ function DemandTrendsChart() {
   // Top products by quantity sold
   const demandData = sales.reduce((acc: any, sale: any) => {
     const product = products.find((p: any) => p.id === sale.productId);
-    const productName = product?.name || "Unknown";
+    const productName = product?.name || sale.productName || "Unknown";
     const existing = acc.find((item: any) => item.name === productName);
     if (existing) {
       existing.quantity += sale.quantity;
@@ -252,11 +268,12 @@ function TransactionsList() {
   return (
     <div className="divide-y">
       {sales.map((s: any) => {
-        const p = products.find((x: any) => x.id === s.productId) || { name: "Unknown" };
+        const p = products.find((x: any) => x.id === s.productId);
+        const name = p?.name || s.productName || "Unknown";
         return (
           <div key={s.id} className="grid grid-cols-4 gap-4 px-4 py-3 items-center">
             <span>{new Date(s.date).toLocaleString()}</span>
-            <span className="font-medium">{p.name}</span>
+            <span className="font-medium">{name}</span>
             <span>{s.quantity}</span>
             <span>₹{s.amount}</span>
           </div>

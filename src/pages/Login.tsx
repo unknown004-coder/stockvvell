@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Package } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,11 +15,9 @@ const Login = () => {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    // Call backend mock login then show animation
     if (!email || !password) return;
-    postJSON("/api/login", { email, password })
-      .then(() => setShowAnimation(true))
-      .catch(() => alert("Login failed"));
+    // Demo login: accept any credentials and proceed to dashboard
+    setShowAnimation(true);
   };
 
   const handleAnimationComplete = () => {
@@ -81,6 +79,7 @@ const Login = () => {
 
           <div className="mt-6 pt-6 border-t border-border">
             <p className="text-xs text-muted-foreground text-center">
+              Don't have an account? <Link to="/signup" className="text-primary underline">Create one</Link>
             </p>
           </div>
         </div>

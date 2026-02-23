@@ -30,9 +30,19 @@ try {
     ).run();
 
     sqliteDb.prepare(
+      `CREATE TABLE IF NOT EXISTS users (
+        id TEXT PRIMARY KEY,
+        email TEXT UNIQUE NOT NULL,
+        passwordHash TEXT NOT NULL,
+        name TEXT
+      )`
+    ).run();
+
+    sqliteDb.prepare(
       `CREATE TABLE IF NOT EXISTS sales (
         id TEXT PRIMARY KEY,
         productId TEXT NOT NULL,
+        productName TEXT,
         quantity INTEGER NOT NULL,
         amount REAL DEFAULT 0,
         date TEXT NOT NULL
@@ -45,10 +55,11 @@ try {
         const raw = fs.readFileSync(JSON_FILE, "utf8");
         const parsed = JSON.parse(raw);
         const insertP = sqliteDb.prepare(`INSERT INTO products (id,name,category,quantity,price) VALUES(?,?,?,?,?)`);
-        const insertS = sqliteDb.prepare(`INSERT INTO sales (id,productId,quantity,amount,date) VALUES(?,?,?,?,?)`);
+        const insertS = sqliteDb.prepare(`INSERT INTO sales (id,productId,productName,quantity,amount,date) VALUES(?,?,?,?,?,?)`);
+            const insertU = sqliteDb.prepare(`INSERT INTO users (id,email,passwordHash,name) VALUES(?,?,?,?)`);
         const pTx = sqliteDb.transaction((products = [], sales = []) => {
           for (const p of products) insertP.run(p.id, p.name, p.category || "", p.quantity || 0, p.price || 0);
-          for (const s of sales) insertS.run(s.id, s.productId, s.quantity, s.amount || 0, s.date || new Date().toISOString());
+          for (const s of sales) insertS.run(s.id, s.productId, s.productName || "", s.quantity, s.amount || 0, s.date || new Date().toISOString());
         });
         pTx(parsed.products || [], parsed.sales || []);
       } catch (e) {
@@ -82,6 +93,44 @@ export function getProducts() {
   }
   const db = readJSON();
   return db.products;
+}
+
+export function createUser({ email, passwordHash, name }) {
+  if (usingSqlite) {
+    const nid = id();
+    sqliteDb.prepare(`INSERT INTO users (id,email,passwordHash,name) VALUES(?,?,?,?)`).run(nid, email, passwordHash, name || "");
+    return sqliteDb.prepare(`SELECT id,email,name FROM users WHERE id = ?`).get(nid);
+  }
+  const db = readJSON();
+  db.users = db.users || [];
+  const nid = id();
+  const user = { id: nid, email, passwordHash, name: name || "" };
+  db.users.push(user);
+  writeJSON(db);
+  return { id: nid, email, name: user.name };
+}
+
+export function getUserByEmail(email) {
+  if (usingSqlite) {
+    return sqliteDb.prepare(`SELECT * FROM users WHERE email = ?`).get(email);
+  }
+  const db = readJSON();
+  db.users = db.users || [];
+  return db.users.find((u) => u.email === email) || null;
+}
+
+export function setUserPasswordByEmail(email, passwordHash) {
+  if (usingSqlite) {
+    sqliteDb.prepare(`UPDATE users SET passwordHash = ? WHERE email = ?`).run(passwordHash, email);
+    return sqliteDb.prepare(`SELECT id,email,name FROM users WHERE email = ?`).get(email);
+  }
+  const db = readJSON();
+  db.users = db.users || [];
+  const user = db.users.find((u) => u.email === email);
+  if (!user) return null;
+  user.passwordHash = passwordHash;
+  writeJSON(db);
+  return { id: user.id, email: user.email, name: user.name };
 }
 
 export function createProduct({ name, category = "", quantity = 0, price = 0 }) {
@@ -130,6 +179,17 @@ export function getSales() {
   return db.sales;
 }
 
+export function clearSales() {
+  if (usingSqlite) {
+    sqliteDb.prepare(`DELETE FROM sales`).run();
+    return { ok: true };
+  }
+  const db = readJSON();
+  db.sales = [];
+  writeJSON(db);
+  return { ok: true };
+}
+
 export function createSale({ productId, quantity, amount, date }) {
   if (usingSqlite) {
     const q = Number(quantity);
@@ -139,7 +199,7 @@ export function createSale({ productId, quantity, amount, date }) {
     const nid = id();
     const tx = sqliteDb.transaction(() => {
       sqliteDb.prepare(`UPDATE products SET quantity = quantity - ? WHERE id = ?`).run(q, productId);
-      sqliteDb.prepare(`INSERT INTO sales (id,productId,quantity,amount,date) VALUES(?,?,?,?,?)`).run(nid, productId, q, Number(amount || 0), date || new Date().toISOString());
+      sqliteDb.prepare(`INSERT INTO sales (id,productId,productName,quantity,amount,date) VALUES(?,?,?,?,?,?)`).run(nid, productId, product.name || "", q, Number(amount || 0), date || new Date().toISOString());
     });
     tx();
     return sqliteDb.prepare(`SELECT * FROM sales WHERE id = ?`).get(nid);
@@ -150,7 +210,7 @@ export function createSale({ productId, quantity, amount, date }) {
   const q = Number(quantity);
   if (product.quantity < q) throw new Error("insufficient stock");
   product.quantity = product.quantity - q;
-  const sale = { id: id(), productId, quantity: q, amount: Number(amount || 0), date: date || new Date().toISOString() };
+  const sale = { id: id(), productId, productName: product.name, quantity: q, amount: Number(amount || 0), date: date || new Date().toISOString() };
   db.sales.push(sale);
   writeJSON(db);
   return sale;
@@ -175,4 +235,4 @@ export function getStats() {
   return { totalProducts, totalSales, inStock, lowStock, outOfStock };
 }
 
-export default { getProducts, createProduct, updateProduct, deleteProduct, getSales, createSale, getStats };
+export default { getProducts, createProduct, updateProduct, deleteProduct, getSales, createSale, getStats, createUser, getUserByEmail, setUserPasswordByEmail, clearSales };

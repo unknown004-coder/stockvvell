@@ -10,6 +10,8 @@ import Sales from "./pages/Sales";
 import Alerts from "./pages/Alerts";
 import AppLayout from "./components/layout/AppLayout";
 import NotFound from "./pages/NotFound";
+import Signup from "./pages/Signup";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 const queryClient = new QueryClient();
 
@@ -21,7 +23,8 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Login />} />
-          <Route element={<AppLayout />}>
+          <Route path="/signup" element={<Signup />} />
+          <Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/inventory" element={<Inventory />} />
             <Route path="/sales" element={<Sales />} />

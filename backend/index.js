@@ -2,10 +2,30 @@ import express from "express";
 import cors from "cors";
 import path from "path";
 import db from "./db.js";
+import bcrypt from "bcryptjs";
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+// Public: login (simple check, returns a local token)
+app.post("/api/login", async (req, res) => {
+  try {
+    const { email, password } = req.body || {};
+    if (!email || !password) return res.status(400).json({ error: "email and password required" });
+    const user = db.getUserByEmail(email);
+    if (!user) return res.status(401).json({ error: "invalid credentials" });
+    const match = await bcrypt.compare(password, user.passwordHash);
+    if (!match) return res.status(401).json({ error: "invalid credentials" });
+    const token = `local-${user.id}`;
+    res.json({ ok: true, token, user: { id: user.id, email: user.email, name: user.name } });
+  } catch (e) {
+    res.status(500).json({ error: String(e) });
+  }
+});
+
+// Authentication middleware
+// No authentication middleware — routes are public/simple-auth
 
 // Products
 app.get("/api/products", (req, res) => {
@@ -78,13 +98,35 @@ app.get("/api/stats", (req, res) => {
   }
 });
 
-// Simple login (mock)
-app.post("/api/login", (req, res) => {
-  const { email, password } = req.body || {};
-  if (!email || !password) return res.status(400).json({ error: "email and password required" });
-  // This is a mock login: accept any credentials and return a token placeholder
-  res.json({ ok: true, token: "mock-token", user: { email } });
+// Clear all sales (reset demand graph)
+app.delete("/api/sales", (req, res) => {
+  try {
+    db.clearSales();
+    res.status(204).end();
+  } catch (e) {
+    res.status(500).json({ error: String(e) });
+  }
 });
 
+// Note: previous mock login replaced by real login endpoint above
+
 const PORT = process.env.PORT || 4000;
+// Create a default user on startup if one doesn't exist
+try {
+  const defaultEmail = process.env.DEFAULT_USER_EMAIL || "stockvvell@gmail.com";
+  const defaultPassword = process.env.DEFAULT_USER_PASSWORD || "Stockvvell@1";
+  const existing = db.getUserByEmail(defaultEmail);
+  const passwordHash = bcrypt.hashSync(defaultPassword, 10);
+  if (!existing) {
+    db.createUser({ email: defaultEmail, passwordHash, name: "Stockvvell" });
+    console.log(`Created default user: ${defaultEmail}`);
+  } else {
+    // Ensure the existing user's password matches the desired default (overwrite)
+    db.setUserPasswordByEmail(defaultEmail, passwordHash);
+    console.log(`Ensured default user password for: ${defaultEmail}`);
+  }
+} catch (e) {
+  console.error("Failed to ensure default user:", e);
+}
+
 app.listen(PORT, () => console.log(`Backend running on http://localhost:${PORT}`));

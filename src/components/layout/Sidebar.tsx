@@ -1,4 +1,4 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { LayoutDashboard, Package, TrendingUp, Bell, LogOut } from "lucide-react";
 
 const navItems = [
@@ -10,6 +10,13 @@ const navItems = [
 
 const Sidebar = () => {
   const location = useLocation();
+
+  const navigate = useNavigate();
+
+  function handleLogout() {
+    // Authentication removed; just navigate to login screen
+    navigate("/");
+  }
 
   return (
     <aside className="w-64 min-h-screen bg-sidebar text-sidebar-foreground flex flex-col shadow-lg">
@@ -49,13 +56,10 @@ const Sidebar = () => {
 
       {/* Logout */}
       <div className="p-4 border-t border-sidebar-border">
-        <Link
-          to="/"
-          className="flex items-center gap-3 px-4 py-3 rounded-md text-sm font-medium text-sidebar-foreground hover:bg-sidebar-accent/30 transition-all duration-200"
-        >
+        <button onClick={handleLogout} className="w-full text-left flex items-center gap-3 px-4 py-3 rounded-md text-sm font-medium text-sidebar-foreground hover:bg-sidebar-accent/30 transition-all duration-200">
           <LogOut className="w-5 h-5 flex-shrink-0" />
           <span>Logout</span>
-        </Link>
+        </button>
       </div>
     </aside>
   );
