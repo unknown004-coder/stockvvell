@@ -1,0 +1,83 @@
+{
+  "products": [
+    {
+      "id": "mlytv6qs-r0w5p12",
+      "name": "chicken",
+      "category": "meat",
+      "quantity": 1,
+      "price": 505
+    },
+    {
+      "id": "mlyxvvpd-zojfu4a",
+      "name": "vegetable",
+      "category": "vegetable",
+      "quantity": 0,
+      "price": 5000
+    },
+    {
+      "id": "mlyyfee4-7s1nmh3",
+      "name": "potato",
+      "category": "vegetable",
+      "quantity": 5,
+      "price": 100
+    },
+    {
+      "id": "mlyyffsi-rpsszpg",
+      "name": "potato",
+      "category": "vegetable",
+      "quantity": 10,
+      "price": 100
+    }
+  ],
+  "sales": [
+    {
+      "id": "mlytxeq9-5dgz057",
+      "productId": "mlytv6qs-r0w5p12",
+      "quantity": 1,
+      "amount": 0,
+      "date": "2026-02-23T07:02:36.753Z"
+    },
+    {
+      "id": "mlyu47cy-l9z3jai",
+      "productId": "mlytv6qs-r0w5p12",
+      "quantity": 10,
+      "amount": 5000,
+      "date": "2026-02-23T07:07:53.794Z"
+    },
+    {
+      "id": "mlyxl0db-mf4pubp",
+      "productId": "mlytv6qs-r0w5p12",
+      "quantity": 8,
+      "amount": 0,
+      "date": "2026-02-23T08:44:56.735Z"
+    },
+    {
+      "id": "mlyxlsj0-iu4sk27",
+      "productId": "mlytv6qs-r0w5p12",
+      "quantity": 1,
+      "amount": 0,
+      "date": "2026-02-23T08:45:33.228Z"
+    },
+    {
+      "id": "mlyxr3cn-j9h1dtm",
+      "productId": "mlytv6qs-r0w5p12",
+      "quantity": 6,
+      "amount": 3030,
+      "date": "2026-02-23T08:49:40.535Z"
+    },
+    {
+      "id": "mlyxw72e-laxfm97",
+      "productId": "mlyxvvpd-zojfu4a",
+      "quantity": 30,
+      "amount": 150000,
+      "date": "2026-02-23T08:53:38.630Z"
+    },
+    {
+      "id": "mlyyftxc-fpr4wg9",
+      "productId": "mlyyfee4-7s1nmh3",
+      "quantity": 5,
+      "amount": 500,
+      "date": "2026-02-23T09:08:54.720Z"
+    }
+  ]
+}

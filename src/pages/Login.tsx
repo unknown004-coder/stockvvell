@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import LoginSuccessAnimation from "@/components/LoginSuccessAnimation";
+import { postJSON } from "@/lib/api";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -14,10 +15,11 @@ const Login = () => {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    // Simple login - show animation then navigate to dashboard
-    if (email && password) {
-      setShowAnimation(true);
-    }
+    // Call backend mock login then show animation
+    if (!email || !password) return;
+    postJSON("/api/login", { email, password })
+      .then(() => setShowAnimation(true))
+      .catch(() => alert("Login failed"));
   };
 
   const handleAnimationComplete = () => {
