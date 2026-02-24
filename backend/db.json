@@ -3,17 +3,24 @@
     {
       "id": "default-user-1",
       "email": "stockvvell@gmail.com",
-      "passwordHash": "$2a$10$rNVCOka8GE/hDX2F5ClfieTEc69Q.gHzi0s/Lo22/Ahda2WOQAqt6",
+      "passwordHash": "$2a$10$jX2Dh/x.nFeQey5b23X7re5P2OaMc2Ny.zyl3.xt8JS0CiBSwcOmm",
       "name": "Stockvvell"
     }
   ],
   "products": [
     {
-      "id": "mlz3bxjr-2q1mdzs",
-      "name": "potato",
-      "category": "vegetable",
-      "quantity": 5,
-      "price": 70
+      "id": "mm0pi421-t4962c1",
+      "name": "addd",
+      "category": "sxs",
+      "quantity": 10,
+      "price": 100
+    },
+    {
+      "id": "mm0pnkxi-yuyty4d",
+      "name": "TEST",
+      "category": "misc",
+      "quantity": 1,
+      "price": 10
     }
   ],
   "sales": []
