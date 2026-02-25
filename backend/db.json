@@ -3,24 +3,24 @@
     {
       "id": "default-user-1",
       "email": "stockvvell@gmail.com",
-      "passwordHash": "$2a$10$jX2Dh/x.nFeQey5b23X7re5P2OaMc2Ny.zyl3.xt8JS0CiBSwcOmm",
+      "passwordHash": "$2a$10$mClZQYKXKlMXq2WYIuFhAunyhd1aOfAF6KB4l4B1dtRsE82xDlyC.",
       "name": "Stockvvell"
     }
   ],
   "products": [
     {
-      "id": "mm0pi421-t4962c1",
+      "id": "mm0qn61y-rwe45ax",
       "name": "addd",
       "category": "sxs",
       "quantity": 10,
       "price": 100
     },
     {
-      "id": "mm0pnkxi-yuyty4d",
-      "name": "TEST",
-      "category": "misc",
+      "id": 1,
+      "name": "aaa",
+      "category": "aaa",
       "quantity": 1,
-      "price": 10
+      "price": 1
     }
   ],
   "sales": []
