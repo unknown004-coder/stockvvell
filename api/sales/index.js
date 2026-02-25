@@ -1,6 +1,6 @@
-const db = require('../_db');
+import db from '../_db.js';
 
-module.exports = async function handler(req, res) {
+export default async function handler(req, res) {
   try {
     if (req.method === 'GET') {
       const sales = db.getSales();
@@ -24,4 +24,4 @@ module.exports = async function handler(req, res) {
   } catch (e) {
     res.status(500).json({ error: String(e) });
   }
-};
+}

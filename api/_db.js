@@ -1,6 +1,9 @@
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 const DB_PATH = path.join(__dirname, '..', 'backend', 'db.json');
 
 function readDB() {
@@ -16,7 +19,7 @@ function writeDB(data) {
   fs.writeFileSync(DB_PATH, JSON.stringify(data, null, 2), 'utf8');
 }
 
-module.exports = {
+export default {
   getProducts() {
     return readDB().products || [];
   },
@@ -69,7 +72,6 @@ module.exports = {
   },
   getStats() {
     const db = readDB();
-    // simple stats: totalProducts, totalSales, revenue
     const totalProducts = (db.products || []).length;
     const totalSales = (db.sales || []).length;
     const revenue = (db.sales || []).reduce((sum, s) => sum + (s.amount || 0), 0);

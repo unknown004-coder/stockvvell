@@ -1,6 +1,6 @@
-const db = require('../_db');
+import db from '../_db.js';
 
-module.exports = async function handler(req, res) {
+export default async function handler(req, res) {
   try {
     const { id } = req.query || {};
     if (!id) return res.status(400).json({ error: 'missing id' });
@@ -28,4 +28,4 @@ module.exports = async function handler(req, res) {
   } catch (e) {
     res.status(500).json({ error: String(e) });
   }
-};
+}
