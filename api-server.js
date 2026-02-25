@@ -36,16 +36,16 @@ const __dirname = path.dirname(__filename);
   app.get('/api/products', (req, res) => productsHandler(req, res));
   app.post('/api/products', (req, res) => productsHandler(req, res));
   app.get('/api/products/:id', (req, res) => {
-    req.query = { id: req.params.id };
-    productByIdHandler(req, res);
+    const newReq = { ...req, query: { id: req.params.id } };
+    productByIdHandler(newReq, res);
   });
   app.put('/api/products/:id', (req, res) => {
-    req.query = { id: req.params.id };
-    productByIdHandler(req, res);
+    const newReq = { ...req, query: { id: req.params.id } };
+    productByIdHandler(newReq, res);
   });
   app.delete('/api/products/:id', (req, res) => {
-    req.query = { id: req.params.id };
-    productByIdHandler(req, res);
+    const newReq = { ...req, query: { id: req.params.id } };
+    productByIdHandler(newReq, res);
   });
 
   // Sales routes
@@ -53,12 +53,12 @@ const __dirname = path.dirname(__filename);
   app.post('/api/sales', (req, res) => salesHandler(req, res));
   app.delete('/api/sales', (req, res) => salesHandler(req, res));
   app.get('/api/sales/:id', (req, res) => {
-    req.query = { id: req.params.id };
-    salesByIdHandler(req, res);
+    const newReq = { ...req, query: { id: req.params.id } };
+    salesByIdHandler(newReq, res);
   });
   app.delete('/api/sales/:id', (req, res) => {
-    req.query = { id: req.params.id };
-    salesByIdHandler(req, res);
+    const newReq = { ...req, query: { id: req.params.id } };
+    salesByIdHandler(newReq, res);
   });
 
   // Stats route
